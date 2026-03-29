@@ -1,32 +1,22 @@
 import jmcomic
-import os
-import yaml
 
-from pkg.plugin.context import EventContext
-from pkg.core.entities import LauncherTypes
 
-from ..cells.apicaller import MsgPlatform
-
-CONFIG_PATH = os.path.join(os.path.dirname(__file__), '..', 'config.yml')
-
-async def rankHandler(msg_platform: MsgPlatform, ctx: EventContext, duration: str):
+def rankHandler(jm_config: dict, duration: str) -> str:
     '''
     获取漫画排行榜
-    
-    Args:
-        msg_platform (MsgPlatform): 消息平台实例
-        ctx (EventContext): 事件上下文
-        duration (str): 排行榜时间范围
     '''
     msg = f"{'周' if duration == 'week' else '月'}排行榜"
-    
-    client = None
-    with open(CONFIG_PATH, "r", encoding="utf-8") as cfg:
-        config: dict = yaml.load(cfg, Loader = yaml.FullLoader)
-        print(f"config: {config.get('client', {}).get('domain', {}).get('api', None)}")
+
+    try:
+        option = jmcomic.JmOption.construct(jm_config or {}, cover_default=True)
+        client = option.new_jm_client()
+    except Exception:
+        client_cfg = jm_config.get("client", {}) if jm_config else {}
+        domain_list = client_cfg.get("domain", {}).get("api", None)
+        impl = client_cfg.get("impl", "api")
         client = jmcomic.JmOption.default().new_jm_client(
-            domain_list=config.get('client', {}).get('domain', {}).get('api', None),
-            impl="api"
+            domain_list=domain_list,
+            impl=impl,
         )
     match duration:
         case "week":
@@ -34,34 +24,14 @@ async def rankHandler(msg_platform: MsgPlatform, ctx: EventContext, duration: st
         case "month":
             page: jmcomic.JmCategoryPage = client.month_ranking(1)
         case _:
-            return
+            return "排行榜参数错误，请使用 week 或 month"
+
+    has_result = False
     for album_id, title in page:
+        has_result = True
         msg += f'\n\n[{album_id}]: {title}'
-    
-    await msg_platform.callApi('/send_forward_msg', {
-        "group_id": str(ctx.event.launcher_id) if ctx.event.query.launcher_type == LauncherTypes.GROUP else "",
-        "user_id": str(ctx.event.query.sender_id) if ctx.event.query.launcher_type == LauncherTypes.PERSON else "",
-        "messages": [
-            {
-                "type": "node",
-                "data": {
-                    "user_id": f"{ctx.event.query.sender_id}",
-                    "nickname": "BOT",
-                    "content": [
-                        {
-                            "type": "text",
-                            "data": {
-                                "text": f"{msg}"
-                            }
-                        }
-                    ]
-                }
-            }
-        ],
-        "news": [
-            {"text": f"樯橹灰飞烟灭"},
-        ],
-        "prompt": "[文件]年度学习资料.zip",
-        "summary": "点击浏览",
-        "source": f"{'周' if duration == 'week' else '月'}排行榜"
-    })
+
+    if not has_result:
+        return "暂无排行榜数据"
+
+    return msg

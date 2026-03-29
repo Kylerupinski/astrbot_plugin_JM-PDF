@@ -1,0 +1,204 @@
+{
+    "runtime_config": {
+        "description": "运行配置",
+        "type": "object",
+        "items": {
+            "max_cache_count": {
+                "description": "缓存上限",
+                "hint": "downloads 目录下缓存项总数上限（章节目录、jpg、pdf 均计入）",
+                "type": "int",
+                "default": 50
+            },
+            "fallback_send_path": {
+                "description": "发送失败回退",
+                "hint": "发送 PDF 失败时返回本地文件路径",
+                "type": "bool",
+                "default": false
+            },
+            "recall_seconds": {
+                "description": "撤回秒数",
+                "hint": "大于 0 时开启延时撤回能力，具体作用范围由下方开关控制 ( x < 120秒，最大值受平台限制和网络延迟，建议不超过 90 秒)",
+                "type": "int",
+                "default": 60
+            },
+            "recall_get_notice": {
+                "description": "撤回 /jm get 进度提示",
+                "hint": "开启后，/jm get 的“正在转换”提示消息会在 recall_seconds 后撤回",
+                "type": "bool",
+                "default": false
+            },
+            "recall_get_file": {
+                "description": "撤回 /jm get 文件消息",
+                "hint": "开启后，/jm get 发送的 PDF 文件消息会在 recall_seconds 后撤回",
+                "type": "bool",
+                "default": true
+            },
+            "recall_search_messages": {
+                "description": "撤回 /jm search 消息",
+                "hint": "开启后，/jm search 的提示与结果消息会在 recall_seconds 后撤回",
+                "type": "bool",
+                "default": false
+            },
+            "recall_rank_messages": {
+                "description": "撤回 /jm rank 消息",
+                "hint": "开启后，/jm rank 的提示与结果消息会在 recall_seconds 后撤回",
+                "type": "bool",
+                "default": false
+            },
+            "download_timeout_seconds": {
+                "description": "下载超时秒数",
+                "hint": "单次 /jm get 下载阶段超时阈值，超时将返回错误提示",
+                "type": "int",
+                "default": 180
+            },
+            "request_debounce_seconds": {
+                "description": "请求防抖秒数",
+                "hint": "同一用户发起 get/search/rank 后，在该时间内重复请求会提示“正在加载，请耐心等待”",
+                "type": "int",
+                "default": 8
+            },
+            "max_concurrent_downloads": {
+                "description": "最大并发下载任务数",
+                "hint": "同时处理 /jm get 任务的上限。低内存机器建议保持 1",
+                "type": "int",
+                "default": 1
+            },
+            "max_download_batch_count": {
+                "description": "下载线程硬上限",
+                "hint": "对 jm_config.batch_count 的上限约束，用于限制下载阶段内存占用",
+                "type": "int",
+                "default": 8
+            },
+            "low_memory_protection": {
+                "description": "启用低内存保护",
+                "hint": "开启后会根据当前可用内存动态下调下载线程数",
+                "type": "bool",
+                "default": true
+            },
+            "low_memory_floor_mb": {
+                "description": "低内存阈值(MB)",
+                "hint": "当可用内存低于该阈值时，下载线程将强制降为 1",
+                "type": "int",
+                "default": 900
+            },
+            "query_timeout_seconds": {
+                "description": "搜索/排行超时秒数",
+                "hint": "单次 /jm search 与 /jm rank 请求的超时阈值",
+                "type": "int",
+                "default": 10
+            },
+            "enable_auto_clean_cache": {
+                "description": "启用自动清理缓存",
+                "hint": "开启后每日凌晨 4:00 自动执行缓存清理",
+                "type": "bool",
+                "default": false
+            },
+            "whitelist": {
+                "description": "会话白名单",
+                "hint": "填写会话 ID（通过/sid命令获取），留空表示不限制",
+                "type": "list",
+                "default": []
+            }
+        }
+    },
+    "jm_config": {
+        "description": "JM 下载器配置",
+        "type": "object",
+        "items": {
+            "dir_rule": {
+                "description": "JM 目录规则",
+                "hint": "对应原 config.yml 的 dir_rule.rule",
+                "type": "string",
+                "default": "Bd_Aid_Pindex"
+            },
+            "client_impl": {
+                "description": "JM 客户端实现",
+                "hint": "对应原 config.yml 的 client.impl",
+                "type": "string",
+                "options": [
+                    "api"
+                ],
+                "default": "api"
+            },
+            "client_api_domains": {
+                "description": "JM API 域名列表",
+                "hint": "对应原 config.yml 的 client.domain.api，按优先级填写",
+                "type": "list",
+                "default": []
+            },
+            "download_cache": {
+                "description": "JM 下载缓存",
+                "hint": "对应原 config.yml 的 download.cache",
+                "type": "bool",
+                "default": true
+            },
+            "image_decode": {
+                "description": "JM 图片解混淆",
+                "hint": "对应原 config.yml 的 download.image.decode",
+                "type": "bool",
+                "default": true
+            },
+            "image_suffix": {
+                "description": "JM 图片后缀",
+                "hint": "对应原 config.yml 的 download.image.suffix",
+                "type": "string",
+                "default": ".jpg"
+            },
+            "batch_count": {
+                "description": "JM 下载线程数",
+                "hint": "对应原 config.yml 的 download.threading.batch_count",
+                "type": "int",
+                "slider": {
+                    "min": 1,
+                    "max": 100,
+                    "step": 1
+                },
+                "default": 45
+            },
+            "login_username": {
+                "description": "JM 登录用户名",
+                "hint": "留空则不启用登录插件",
+                "type": "string",
+                "default": ""
+            },
+            "login_password": {
+                "description": "JM 登录密码",
+                "hint": "留空则不启用登录插件",
+                "type": "string",
+                "default": ""
+            }
+        }
+    },
+    "command_config": {
+        "description": "命令配置",
+        "type": "object",
+        "items": {
+            "enable_download": {
+                "description": "启用下载命令",
+                "type": "bool",
+                "default": true
+            },
+            "enable_search": {
+                "description": "启用搜索命令",
+                "type": "bool",
+                "default": true
+            },
+            "enable_rank": {
+                "description": "启用排行榜命令",
+                "type": "bool",
+                "default": true
+            },
+            "enable_clear": {
+                "description": "启用清缓存命令",
+                "type": "bool",
+                "default": true
+            },
+            "enable_text_match": {
+                "description": "启用数字自动匹配",
+                "hint": "当消息中出现 6-7 位数字时自动识别为 jm 号",
+                "type": "bool",
+                "default": false
+            }
+        }
+    }
+}
