@@ -22,7 +22,7 @@ from .utils.msg_recall import MsgRecall
     "Kylerupinski",
     "JM 漫画下载并转换 PDF",
     "1.6.4",
-    "https://github.com/Kylerupinski/astrbot_plugin_JM-PDF",
+    "https://github.com/Kylerupinski/astrbot_plugin_JM_PDF",
 )
 class JMPDFPlugin(Star):
     def __init__(self, context: Context, config: AstrBotConfig):

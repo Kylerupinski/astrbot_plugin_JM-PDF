@@ -1,6 +1,6 @@
 ## JM PDF (AstrBot 版)
 
-这是一个 AstrBot 的 JM 漫画下载插件。（迁移自 [JM-PDF-plugin](https://github.com/AmethystTim/JM-PDF-plugin)）
+这是一个 AstrBot 的 JM 漫画下载插件。（迁移自 [JM_PDF_plugin](https://github.com/AmethystTim/JM_PDF_plugin)）
 
 ### 已实现功能
 
@@ -63,7 +63,7 @@ PyYAML
 ### 目录结构（当前）
 
 ```text
-astrbot_plugin_JM-PDF/
+astrbot_plugin_JM_PDF/
   main.py
   metadata.yaml
   _conf_schema.json
