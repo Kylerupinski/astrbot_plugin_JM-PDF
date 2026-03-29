@@ -1,6 +1,6 @@
-name: astrbot_plugin_jm-pdf
+name: astrbot_plugin_JM-PDF
 display_name: JM PDF
-desc: JM 漫画下载并转 PDF 的 AstrBot 插件，支持搜索、下载、排行榜等功能
+desc: 用于JM漫画下载🧩，支持缓存，指定章节下载，文案匹配，定时撤回，关键词搜索✨
 version: v1.6.4
 author: Kylerupinski
 repo: https://github.com/Kylerupinski/astrbot_plugin_JM-PDF
